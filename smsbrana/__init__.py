@@ -6,10 +6,10 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 import urllib
 import hashlib
-from smsconnect import const, signals
+from smsbrana import const, signals
 import requests
 import xml.etree.ElementTree as ET
-from smsconnect.models import SentSms
+from smsbrana.models import SentSms
 
 
 class SmsConnectException(Exception): pass
@@ -84,6 +84,7 @@ class SmsConnect(object):
             print 'construct url kwargs', url
         return url
 
+    #TODO recall if the err tels that the salt is the same
     def _call_api(self, url, parse_function=parse_simple_response_xml_to_dict, check_err=True):
         response = requests.get(url)
 

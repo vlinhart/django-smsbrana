@@ -4,10 +4,10 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.dispatch.dispatcher import receiver
 from django.test.testcases import TestCase
-import smsconnect
-from smsconnect import SmsConnect, SmsConnectException, parse_inbox_xml_to_dict
-from smsconnect import signals
-from smsconnect.fields import CZPhoneNumberField
+import smsbrana
+from smsbrana import SmsConnect, SmsConnectException, parse_inbox_xml_to_dict
+from smsbrana import signals
+from smsbrana.fields import CZPhoneNumberField
 
 PASSW = 'test'
 LOGIN = 'test'
@@ -39,7 +39,7 @@ INBOX_XML = """<result>
 </result>
 """
 
-smsconnect.debug = True
+smsbrana.debug = True
 
 
 class TestSmsConnect(TestCase):

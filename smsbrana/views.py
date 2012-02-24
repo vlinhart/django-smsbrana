@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from django.http import HttpResponse
-from smsconnect import signals, SentSms
-import smsconnect
+from smsbrana import signals, SentSms
+import smsbrana
 import logging
 
 logger = logging.getLogger(__name__)
 
 def smsconnect_notification(request):
-    result = smsconnect.inbox()
+    result = smsbrana.inbox()
     print result
     for delivered in result['delivery_report']:
         sms_id = delivered['idsms']
