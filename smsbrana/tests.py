@@ -61,7 +61,12 @@ class TestSmsConnect(TestCase):
 
     def test_inbox(self):
         sc = SmsConnect(login=settings.SMS_CONNECT_LOGIN, password=settings.SMS_CONNECT_PASSWORD, secure=True)
-        sc.inbox()
+        print sc.inbox()
+
+
+    def test_send_sms(self):
+        sc = SmsConnect(login=settings.SMS_CONNECT_LOGIN, password=settings.SMS_CONNECT_PASSWORD, secure=True)
+        self.assertRaises(SmsConnectException, sc.send_sms, 'neplatne cislo', 'test message')
 
     def test_inbox_xml_parsing(self):
         result = parse_inbox_xml_to_dict(INBOX_XML)

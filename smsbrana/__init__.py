@@ -6,11 +6,13 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 import urllib
 import hashlib
+import logging
 from smsbrana import const, signals
 import requests
 import xml.etree.ElementTree as ET
 from smsbrana.models import SentSms
 
+logger = logging.getLogger(__name__)
 
 class SmsConnectException(Exception): pass
 
@@ -84,23 +86,26 @@ class SmsConnect(object):
             print 'construct url kwargs', url
         return url
 
-    #TODO recall if the err tels that the salt is the same
-    def _call_api(self, url, parse_function=parse_simple_response_xml_to_dict, check_err=True):
-        response = requests.get(url)
+    def _call_api(self, action, params={}, parse_function=parse_simple_response_xml_to_dict, check_err=True):
+        for i in range(1, 5): #if salt is used twice, make another 5 attempts #TODO ugly
+            url = self.construct_url(action, **params)
+            response = requests.get(url)
 
-        if response.status_code != requests.codes.ok:
-            raise SmsConnectException('wrong status code returned %s' % response.status_code)
-        result = parse_function(response.text)
-        #        print result
+            if response.status_code != requests.codes.ok:
+                raise SmsConnectException('wrong status code returned %s' % response.status_code)
+            result = parse_function(response.text)
+            #        print result
 
-        if check_err and result['err'] != '0':
-            raise SmsConnectException('Error %s - %s' % (result['err'], const.ERROR_CODES[result['err']]))
-        return result
+            if check_err and result['err'] != '0':
+                if result['err'] == '7': #if salt is used twice, do it again
+                    logger.warning('%s , attempt %s'(const.ERROR_CODES[result['err']], i))
+                    continue
+                raise SmsConnectException('Error %s - %s' % (result['err'], const.ERROR_CODES[result['err']]))
+            return result
 
     def send_sms(self, number, message, when=None, delivery_report=1, sender_id=SENDER_ID):
-        url = self.construct_url('send_sms', number=number, message=message, when=when,
-            delivery_report=delivery_report, sender_id=sender_id)
-        result = self._call_api(url)
+        result = self._call_api('send_sms', params=dict(number=number, message=message, when=None, delivery_report=1,
+            sender_id=SENDER_ID))
         SentSms.objects.create(phone_number=number, message=message)
         signals.smsconnect_sms_sent.send(sender=self, phone_number=number, text=message) #TODO document this
         return result
@@ -109,11 +114,9 @@ class SmsConnect(object):
         """
         Returns dict with keys 'delivery_sms' and 'delivery_report' which contains lists of items dicts.
         """
-        url = self.construct_url('inbox', )
-        result = self._call_api(url, check_err=False, parse_function=parse_inbox_xml_to_dict)
+        result = self._call_api('inbox', check_err=False, parse_function=parse_inbox_xml_to_dict)
         return result
 
     def credit_info(self):
-        url = self.construct_url('credit_info')
-        result = self._call_api(url)
+        result = self._call_api('credit_info')
         return result['credit']
