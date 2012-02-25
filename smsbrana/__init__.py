@@ -6,13 +6,11 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 import urllib
 import hashlib
-import logging
+from django.utils.encoding import force_unicode, smart_str
 from smsbrana import const, signals
 import requests
 import xml.etree.ElementTree as ET
 from smsbrana.models import SentSms
-
-logger = logging.getLogger(__name__)
 
 class SmsConnectException(Exception): pass
 
@@ -40,7 +38,6 @@ def parse_simple_response_xml_to_dict(xml):
 
 def parse_inbox_xml_to_dict(xml):
     tree = ET.XML(xml)
-    response_dict = {}
 
     def parse_items_in(in_param):
         response_dict = defaultdict(list)
@@ -73,22 +70,23 @@ class SmsConnect(object):
 
         return urllib.urlencode(values)
 
-    def construct_url(self, name, **kwargs):
+    def _construct_url(self, name, **kwargs):
         if debug:
             print 'construct url kwargs', kwargs
         values = {'action': name}
         for k, v in kwargs.items():
             if v:
-                values[k] = v
+                values[k] = smart_str(force_unicode(v))
 
-        url = "%s?%s&%s" % (const.API_ACCES_POINT, self._auth_url_part(), urllib.urlencode(values))
+        url = u'%s?%s&%s' % (const.API_ACCES_POINT, self._auth_url_part(), urllib.urlencode(values))
         if debug:
             print 'construct url kwargs', url
         return url
 
-    def _call_api(self, action, params={}, parse_function=parse_simple_response_xml_to_dict, check_err=True):
-        for i in range(1, 5): #if salt is used twice, make another 5 attempts #TODO ugly
-            url = self.construct_url(action, **params)
+    def _call_api(self, action, params={}, parse_function=parse_simple_response_xml_to_dict, check_err=True,
+                  attempts=5):
+        for i in range(1, attempts): #if salt is used twice, make another few attempts #TODO ugly
+            url = self._construct_url(action, **params)
             response = requests.get(url)
 
             if response.status_code != requests.codes.ok:
@@ -97,16 +95,16 @@ class SmsConnect(object):
             #        print result
 
             if check_err and result['err'] != '0':
-                if result['err'] == '7': #if salt is used twice, do it again
-                    logger.warning('%s , attempt %s'(const.ERROR_CODES[result['err']], i))
+                if result['err'] == '7' and i < attempts - 1: #if salt is used twice, do it again
+#                    logger.warning('%s , attempt %s' % (const.ERROR_CODES[result['err']], i))
                     continue
                 raise SmsConnectException('Error %s - %s' % (result['err'], const.ERROR_CODES[result['err']]))
             return result
 
     def send_sms(self, number, message, when=None, delivery_report=1, sender_id=SENDER_ID):
-        result = self._call_api('send_sms', params=dict(number=number, message=message, when=None, delivery_report=1,
-            sender_id=SENDER_ID))
-        SentSms.objects.create(phone_number=number, message=message)
+        result = self._call_api('send_sms',
+            params=dict(number=number, message=message, when=when, delivery_report=delivery_report,
+                sender_id=sender_id))
         signals.smsconnect_sms_sent.send(sender=self, phone_number=number, text=message) #TODO document this
         return result
 
@@ -114,7 +112,8 @@ class SmsConnect(object):
         """
         Returns dict with keys 'delivery_sms' and 'delivery_report' which contains lists of items dicts.
         """
-        result = self._call_api('inbox', check_err=False, parse_function=parse_inbox_xml_to_dict)
+        result = self._call_api('inbox', params=dict(delete=delete), check_err=False,
+            parse_function=parse_inbox_xml_to_dict)
         return result
 
     def credit_info(self):

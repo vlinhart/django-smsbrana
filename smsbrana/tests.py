@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+import datetime
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.dispatch.dispatcher import receiver
@@ -8,6 +8,7 @@ import smsbrana
 from smsbrana import SmsConnect, SmsConnectException, parse_inbox_xml_to_dict
 from smsbrana import signals
 from smsbrana.fields import CZPhoneNumberField
+from smsbrana.models import SentSms
 
 PASSW = 'test'
 LOGIN = 'test'
@@ -49,7 +50,7 @@ class TestSmsConnect(TestCase):
 
         sc = SmsConnect(login=LOGIN, password=PASSW, secure=True)
         self.assertEqual(
-            sc._auth_url_part(time=datetime(2012, 2, 23, 11, 13, 13), sul='73952a8e84f14b4caaf1e38f81f14e0a'),
+            sc._auth_url_part(time=datetime.datetime(2012, 2, 23, 11, 13, 13), sul='73952a8e84f14b4caaf1e38f81f14e0a'),
             'login=test&sul=73952a8e84f14b4caaf1e38f81f14e0a&auth=34204a8d27474431b585e3dff75db101&time=20120223T111313')
 
     def test_credit_info(self):
@@ -59,12 +60,12 @@ class TestSmsConnect(TestCase):
         sc = SmsConnect(login=settings.SMS_CONNECT_LOGIN, password=settings.SMS_CONNECT_PASSWORD, secure=True)
         self.assertTrue(sc.credit_info()) #check that we have somethin
 
-    def test_inbox(self):
+    def dtest_inbox(self):
         sc = SmsConnect(login=settings.SMS_CONNECT_LOGIN, password=settings.SMS_CONNECT_PASSWORD, secure=True)
         print sc.inbox()
 
 
-    def test_send_sms(self):
+    def dtest_send_sms(self):
         sc = SmsConnect(login=settings.SMS_CONNECT_LOGIN, password=settings.SMS_CONNECT_PASSWORD, secure=True)
         self.assertRaises(SmsConnectException, sc.send_sms, 'neplatne cislo', 'test message')
 
@@ -92,3 +93,12 @@ class TestSmsConnect(TestCase):
 
         for test_case in bad_test_cases:
             self.assertRaises(ValidationError, field.clean, test_case)
+
+    def test_ip_time_allowance(self):
+        object = SentSms.objects.create(sms_id=10, phone_number='777777777', message='msg', verification_code='c',
+            ip_address='1.1.1.1')
+        self.assertFalse(SentSms.can_send_from_ip('1.1.1.1'))
+        self.assertTrue(SentSms.can_send_from_ip('1.1.1.2'))
+        object.sent_date = datetime.datetime.now() - datetime.timedelta(seconds=30)
+        object.save()
+        self.assertTrue(SentSms.can_send_from_ip('1.1.1.1', time_allowance=30))

@@ -3,9 +3,6 @@ from datetime import datetime
 from django.http import HttpResponse
 from smsbrana import signals, SentSms
 import smsbrana
-import logging
-
-logger = logging.getLogger(__name__)
 
 def smsconnect_notification(request):
     result = smsbrana.inbox()
@@ -18,7 +15,8 @@ def smsconnect_notification(request):
             sms.delivered_date = datetime.now()
             sms.save()
         except SentSms.DoesNotExist:
-            logger.error('sms delivered which wasn\'t sent' + str(delivered))
+#            logger.error('sms delivered which wasn\'t sent' + str(delivered))
+            pass
 
     signals.smsconnect_notification_received.send(sender=None, inbox=result, request=request)#TODO document this
     return HttpResponse('OK')

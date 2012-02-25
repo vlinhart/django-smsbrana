@@ -16,6 +16,7 @@ class CZPhoneNumberField(CharField):
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 20
         kwargs['min_length'] = 9
+        kwargs['label'] = kwargs.get('label',_(u'Phone number'))
         super(CZPhoneNumberField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
