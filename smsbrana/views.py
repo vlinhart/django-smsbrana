@@ -9,7 +9,7 @@ from smsbrana.models import SentSms
 def smsconnect_notification(request):
     sc = SmsConnect()
     result = sc.inbox() #TODO delete inbox?
-    print result
+#    print result
     for delivered in result['delivery_report']:
         sms_id = delivered['idsms']
         if delivered['status'] != DELIVERY_STATUS_DELIVERED:
@@ -23,6 +23,6 @@ def smsconnect_notification(request):
 #            logger.error('sms delivered which wasn\'t sent' + str(delivered))
             pass
 
-    signals.smsconnect_notification_received.send(sender=None, inbox=result, request=request)#TODO document this
+    signals.smsconnect_notification_received.send(sender=None, inbox=result, request=request)
     return HttpResponse('OK')
 

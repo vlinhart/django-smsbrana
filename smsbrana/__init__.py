@@ -101,10 +101,13 @@ class SmsConnect(object):
             return result
 
     def send_sms(self, number, message, when=None, delivery_report=1, sender_id=SENDER_ID):
+        """
+        Returns dict containing this keys - 'err','price','sms_count','credit','sms_id'
+        """
         result = self._call_api('send_sms',
             params=dict(number=number, message=message, when=when, delivery_report=delivery_report,
                 sender_id=sender_id))
-        signals.smsconnect_sms_sent.send(sender=self, phone_number=number, text=message) #TODO document this
+        signals.smsconnect_sms_sent.send(sender=self, phone_number=number, text=message, result=result)
         return result
 
     def inbox(self, delete=None):
@@ -116,5 +119,8 @@ class SmsConnect(object):
         return result
 
     def credit_info(self):
+        """
+        Returns credit left
+        """
         result = self._call_api('credit_info')
         return result['credit']
