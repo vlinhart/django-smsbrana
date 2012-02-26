@@ -10,7 +10,7 @@ from django.utils.encoding import force_unicode, smart_str
 from smsbrana import const, signals
 import requests
 import xml.etree.ElementTree as ET
-from smsbrana.models import SentSms
+from smsbrana.const import DATETIME_FORMAT
 
 class SmsConnectException(Exception): pass
 
@@ -50,7 +50,6 @@ def parse_inbox_xml_to_dict(xml):
 
     response_dict = parse_items_in('delivery_sms')
     response_dict.update(parse_items_in('delivery_report'))
-
     return response_dict
 
 
@@ -63,7 +62,7 @@ class SmsConnect(object):
     def _auth_url_part(self, time=None, sul=None):
         values = {'login': self.login}
         if self.secure:
-            values = dict(values, time=(time or datetime.now()).strftime('%Y%m%dT%H%M%S'), sul=sul or uuid.uuid4().hex)
+            values = dict(values, time=(time or datetime.now()).strftime(DATETIME_FORMAT), sul=sul or uuid.uuid4().hex)
             values['auth'] = hashlib.md5('%s%s%s' % (self.password, values['time'], values['sul'])).hexdigest()
         else:
             values = dict(values, password=self.password)
@@ -96,7 +95,7 @@ class SmsConnect(object):
 
             if check_err and result['err'] != '0':
                 if result['err'] == '7' and i < attempts - 1: #if salt is used twice, do it again
-#                    logger.warning('%s , attempt %s' % (const.ERROR_CODES[result['err']], i))
+                #                    logger.warning('%s , attempt %s' % (const.ERROR_CODES[result['err']], i))
                     continue
                 raise SmsConnectException('Error %s - %s' % (result['err'], const.ERROR_CODES[result['err']]))
             return result

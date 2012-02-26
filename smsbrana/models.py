@@ -35,6 +35,11 @@ class SentSms(models.Model):
         allow_after = datetime.datetime.now() - datetime.timedelta(seconds=time_allowance)
         return not SentSms.objects.filter(ip_address=ip, sent_date__gt=allow_after).exists()
 
+    @staticmethod
+    def sms_to_number_delivered_in_last_hours(hours, phone_number):
+        day_ago = datetime.datetime.now() - datetime.timedelta(hours=hours)
+        return SentSms.objects.filter(phone_number=phone_number, sent_date__gt=day_ago, delivered=True).exists()
+
     class Meta:
         verbose_name = _('Sent SMS')
         verbose_name_plural = _('Sent SMSes')

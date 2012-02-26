@@ -60,12 +60,13 @@ class TestSmsConnect(TestCase):
         sc = SmsConnect(login=settings.SMS_CONNECT_LOGIN, password=settings.SMS_CONNECT_PASSWORD, secure=True)
         self.assertTrue(sc.credit_info()) #check that we have somethin
 
-    def dtest_inbox(self):
+    def test_inbox(self):
         sc = SmsConnect(login=settings.SMS_CONNECT_LOGIN, password=settings.SMS_CONNECT_PASSWORD, secure=True)
         print sc.inbox()
+#        print sc.inbox(delete=True)
 
 
-    def dtest_send_sms(self):
+    def test_send_sms(self):
         sc = SmsConnect(login=settings.SMS_CONNECT_LOGIN, password=settings.SMS_CONNECT_PASSWORD, secure=True)
         self.assertRaises(SmsConnectException, sc.send_sms, 'neplatne cislo', 'test message')
 
