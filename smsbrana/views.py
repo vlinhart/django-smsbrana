@@ -8,7 +8,7 @@ from smsbrana.models import SentSms
 
 def smsconnect_notification(request):
     sc = SmsConnect()
-    result = sc.inbox() #TODO delete inbox?
+    result = sc.inbox()
 #    print result
     for delivered in result['delivery_report']:
         sms_id = delivered['idsms']
@@ -16,12 +16,18 @@ def smsconnect_notification(request):
             continue
         try:
             sms = SentSms.objects.get(sms_id=sms_id)
+            if sms.delivered:
+                continue
             sms.delivered = True
             sms.delivered_date = datetime.strptime(delivered['time'], DATETIME_FORMAT)
             sms.save()
         except SentSms.DoesNotExist:
 #            logger.error('sms delivered which wasn\'t sent' + str(delivered))
             pass
+
+    #delete the inbox if there are 100+ items
+    if len(result['delivery_report']) > 100:
+        sc.inbox(delete=True)
 
     signals.smsconnect_notification_received.send(sender=None, inbox=result, request=request)
     return HttpResponse('OK')

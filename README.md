@@ -30,7 +30,7 @@ Have a look at the tests to see how the class SmsConnect is used. Basically like
 
     sc = SmsConnect()
     result = sc.send_sms(number='777111222', message='msg') #there are more optional params
-    #in *result* is a dict containing this keys - 'err','price','sms_count','credit','sms_id'
+    #in result is a dict containing this keys - 'err','price','sms_count','credit','sms_id'
 
 All API calls can raise SmsConnectException, you should handle it. 
 
