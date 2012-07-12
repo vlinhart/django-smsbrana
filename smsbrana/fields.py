@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-from django.core.exceptions import ValidationError
-from django.utils.encoding import smart_unicode
 import re
+
+from django.core.exceptions import ValidationError
+from django.core import validators
+from django.utils.encoding import smart_unicode
 from django.forms.fields import CharField
 from django.utils.translation import ugettext as _
 
@@ -21,6 +23,8 @@ class CZPhoneNumberField(CharField):
 
     def clean(self, value):
         super(CZPhoneNumberField, self).clean(value)
+        if value in validators.EMPTY_VALUES and not self.required:
+            return
 
         value = re.sub('\s', '', smart_unicode(value))
         m = cz_phone_re.search(value)
