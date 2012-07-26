@@ -1,0 +1,120 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-07-26 16:48+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
+
+#: const.py:5
+msgid "OK"
+msgstr ""
+
+#: const.py:6
+msgid "neznámá chyba"
+msgstr ""
+
+#: const.py:7
+msgid "neplatný login"
+msgstr ""
+
+#: const.py:8
+msgid "neplatný hash nebo password (podle varianty zabezpecení prihlášení)"
+msgstr ""
+
+#: const.py:9
+msgid ""
+"neplatný time, vetší odchylka casu mezi servery než maximální akceptovaná v "
+"nastavení služby SMS Connect"
+msgstr ""
+
+#: const.py:10
+msgid "nepovolená IP, viz nastavení služby SMS Connect"
+msgstr ""
+
+#: const.py:11
+msgid "neplatný název akce"
+msgstr ""
+
+#: const.py:12
+msgid "tato sůl byla již jednou za daný den použita"
+msgstr ""
+
+#: const.py:13
+msgid "nebylo navázáno spojení s databází"
+msgstr ""
+
+#: const.py:14
+msgid "nedostatecný kredit"
+msgstr ""
+
+#: const.py:15
+msgid "neplatné císlo príjemce SMS"
+msgstr ""
+
+#: const.py:16
+msgid "prázdný text zprávy"
+msgstr ""
+
+#: const.py:17
+msgid "SMS je delší než povolených 459 znaků"
+msgstr ""
+
+#: fields.py:13
+msgid "CZ Phone number"
+msgstr "České telefonní číslo"
+
+#: fields.py:15
+msgid ""
+"Phone numbers must be in 777111222 or 777 111 222 or +420 777 111 222 or "
+"00420777111222 format."
+msgstr ""
+"Telefonní číslo musí být ve formátu 777111222 nebo 777 111 222 nebo +420 777 111 222 nebo 00420777111222."
+
+#: fields.py:21
+msgid "Phone number"
+msgstr "Telefonní číslo"
+
+#: models.py:10
+msgid "phone number"
+msgstr "telefonní číslo"
+
+#: models.py:11
+msgid "message"
+msgstr "zpráva"
+
+#: models.py:12
+msgid "verification code"
+msgstr "ověřovací kód"
+
+#: models.py:13
+msgid "created"
+msgstr "vytvořeno"
+
+#: models.py:14
+msgid "delivered"
+msgstr "doručeno"
+
+#: models.py:15
+msgid "delivered time"
+msgstr "čas doručení"
+
+#: models.py:44
+msgid "Sent SMS"
+msgstr "Odeslané SMS"
+
+#: models.py:45
+msgid "Sent SMSes"
+msgstr "Poslané SMS"
