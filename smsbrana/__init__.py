@@ -89,7 +89,7 @@ class SmsConnect(object):
             response = requests.get(url)
 
             if response.status_code != requests.codes.ok:
-                raise SmsConnectException('wrong status code returned %s' % response.status_code)
+                raise SmsConnectException(u'wrong status code returned %s' % response.status_code)
             result = parse_function(response.text)
             #        print result
 
@@ -97,7 +97,7 @@ class SmsConnect(object):
                 if result['err'] == '7' and i < attempts - 1: #if salt is used twice, do it again
                 #                    logger.warning('%s , attempt %s' % (const.ERROR_CODES[result['err']], i))
                     continue
-                raise SmsConnectException('Error %s - %s' % (result['err'], const.ERROR_CODES[result['err']]))
+                raise SmsConnectException(u'Error %s - %s' % (result['err'], const.ERROR_CODES[result['err']]))
             return result
 
     def send_sms(self, number, message, when=None, delivery_report=1, sender_id=SENDER_ID):
