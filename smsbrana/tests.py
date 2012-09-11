@@ -7,7 +7,7 @@ from django.test.testcases import TestCase
 import smsbrana
 from smsbrana import SmsConnect, SmsConnectException, parse_inbox_xml_to_dict
 from smsbrana import signals
-from smsbrana.fields import CZPhoneNumberField
+from smsbrana.fields import PhoneNumberField
 from smsbrana.models import SentSms
 
 PASSW = 'test'
@@ -83,14 +83,17 @@ class TestSmsConnect(TestCase):
 
         signals.smsconnect_notification_received.send(sender=None, inbox="hello result", request='request')
 
-    def test_cz_phone_field(self):
+    def test_phone_field(self):
         good_test_cases = ['777111222', '777 111 222', '777  111 222', '+420777111222', '+420 777111222',
                            ' +420 777 111 222  ', '+420777   111 222', '00420777111222', '00420 777 111 222']
-        bad_test_cases = ['a 777111222  ', '4777 111 222', '777 a 111 222', '420777111222', '+421 777111222',
+        good_test_cases2 = ['+421 777111222', '00421 777111222']
+        bad_test_cases = ['a 777111222  ', '4777 111 222', '777 a 111 222', '420777111222',
                           '420 777 111 222', '0+420777   111 222', '000420777111222', '+00420 777 111 222']
-        field = CZPhoneNumberField()
+        field = PhoneNumberField()
         for test_case in good_test_cases:
             self.assertEqual(field.clean(test_case), '+420777111222')
+        for test_case in good_test_cases2:
+            self.assertEqual(field.clean(test_case), '+421777111222')
 
         for test_case in bad_test_cases:
             self.assertRaises(ValidationError, field.clean, test_case)
