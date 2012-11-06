@@ -7,13 +7,13 @@ from django_extensions.db.fields import CreationDateTimeField
 
 class SentSms(models.Model):
     sms_id = models.IntegerField(primary_key=True)
-    phone_number = models.CharField(_(u'phone number'), max_length=20)
+    phone_number = models.CharField(_(u'phone number'), max_length=20, db_index=True)
     message = models.CharField(_(u'message'), max_length=500)
     verification_code = models.CharField(_(u'verification code'), max_length=10, blank=True, null=True)
-    sent_date = CreationDateTimeField(_(u'created'))
-    delivered = models.BooleanField(_(u'delivered'))
+    sent_date = CreationDateTimeField(_(u'created'), db_index=True)
+    delivered = models.BooleanField(_(u'delivered'), db_index=True)
     delivered_date = models.DateTimeField(_(u'delivered time'), blank=True, null=True, editable=False)
-    ip_address = models.IPAddressField(blank=True, null=True)
+    ip_address = models.IPAddressField(blank=True, null=True, db_index=True)
 
     def __unicode__(self):
         return self.phone_number

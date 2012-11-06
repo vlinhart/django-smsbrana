@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict
 from datetime import datetime
+import logging
 import uuid
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -11,6 +12,8 @@ from smsbrana import const, signals
 import requests
 import xml.etree.ElementTree as ET
 from smsbrana.const import DATETIME_FORMAT
+
+logger = logging.getLogger(__name__)
 
 class SmsConnectException(Exception): pass
 
@@ -71,7 +74,7 @@ class SmsConnect(object):
 
     def _construct_url(self, name, **kwargs):
         if debug:
-            print 'construct url kwargs', kwargs
+            logger.debug('construct url kwargs %s', kwargs)
         values = {'action': name}
         for k, v in kwargs.items():
             if v:
@@ -79,7 +82,7 @@ class SmsConnect(object):
 
         url = u'%s?%s&%s' % (const.API_ACCES_POINT, self._auth_url_part(), urllib.urlencode(values))
         if debug:
-            print 'construct url kwargs', url
+            logger.debug('construct url kwargs %s', url)
         return url
 
     def _call_api(self, action, params={}, parse_function=parse_simple_response_xml_to_dict, check_err=True,
@@ -95,7 +98,7 @@ class SmsConnect(object):
 
             if check_err and result['err'] != '0':
                 if result['err'] == '7' and i < attempts - 1: #if salt is used twice, do it again
-                #                    logger.warning('%s , attempt %s' % (const.ERROR_CODES[result['err']], i))
+                    logger.warning('%s , attempt %s' % (const.ERROR_CODES[result['err']], i))
                     continue
                 raise SmsConnectException(u'Error %s - %s' % (result['err'], const.ERROR_CODES[result['err']]))
             return result
