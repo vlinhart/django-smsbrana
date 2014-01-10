@@ -40,7 +40,7 @@ def parse_simple_response_xml_to_dict(xml):
 
 
 def parse_inbox_xml_to_dict(xml):
-    tree = ET.XML(xml)
+    tree = ET.XML(xml.encode('utf8'))
 
     def parse_items_in(in_param):
         response_dict = defaultdict(list)
