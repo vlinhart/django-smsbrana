@@ -12,11 +12,11 @@ import os
 
 setup(
     name = "django-smsbrana",
-    version = "0.1",
+    version = "0.2",
     url = 'https://github.com/vlinhart/django-smsbrana',
     download_url = 'https://github.com/vlinhart/django-smsbrana/downloads',
     license = 'BSD',
-    description = "Django app to ease smsbrana smsconnect integration.",
+    description = "Django app to ease smsbrana.cz smsconnect integration.",
     author = 'Vladimir Linhart',
     author_email = 'vladimir.linhart@gmail.com',
     packages = find_packages(),

@@ -106,3 +106,26 @@ class TestSmsConnect(TestCase):
         object.sent_date = datetime.datetime.now() - datetime.timedelta(seconds=30)
         object.save()
         self.assertTrue(SentSms.can_send_from_ip('1.1.1.1', time_allowance=30))
+
+    def test_too_many_sms_to_number_sent_in_last_hours(self):
+        object = SentSms.objects.create(sms_id=10, phone_number='777777777', message='msg', verification_code='c',
+            ip_address='1.1.1.1')
+        self.assertFalse(SentSms.too_many_sms_to_number_sent_in_last_hours(1, '777777777', 2))
+        SentSms.objects.create(sms_id=11, phone_number='777777777', message='msg', verification_code='c',
+            ip_address='1.1.1.1')
+        self.assertTrue(SentSms.too_many_sms_to_number_sent_in_last_hours(1, '777777777', 2))
+        object.sent_date = datetime.datetime.now() - datetime.timedelta(hours=2)
+        object.save()
+        self.assertFalse(SentSms.too_many_sms_to_number_sent_in_last_hours(1, '777777777', 2))
+        
+    def test_too_many_sms_from_ip_sent_in_last_hours(self):
+        ip_address='1.1.1.1'
+        object = SentSms.objects.create(sms_id=10, phone_number='777777777', message='msg', verification_code='c',
+            ip_address=ip_address)
+        self.assertFalse(SentSms.too_many_sms_from_ip_sent_in_last_hours(1, ip_address, 2))
+        object = SentSms.objects.create(sms_id=11, phone_number='777777777', message='msg', verification_code='c',
+            ip_address=ip_address)
+        self.assertTrue(SentSms.too_many_sms_from_ip_sent_in_last_hours(1, ip_address, 2))
+        object.sent_date = datetime.datetime.now() - datetime.timedelta(hours=2)
+        object.save()
+        self.assertFalse(SentSms.too_many_sms_from_ip_sent_in_last_hours(1, ip_address, 2))

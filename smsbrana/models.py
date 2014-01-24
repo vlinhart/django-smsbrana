@@ -39,6 +39,16 @@ class SentSms(models.Model):
     def sms_to_number_delivered_in_last_hours(hours, phone_number):
         day_ago = datetime.datetime.now() - datetime.timedelta(hours=hours)
         return SentSms.objects.filter(phone_number=phone_number, sent_date__gt=day_ago, delivered=True).exists()
+    
+    @staticmethod
+    def too_many_sms_to_number_sent_in_last_hours(hours, phone_number, max_sms_count=5):
+        since = datetime.datetime.now() - datetime.timedelta(hours=hours)
+        return SentSms.objects.filter(phone_number=phone_number, sent_date__gt=since).count() >= max_sms_count
+    
+    @staticmethod
+    def too_many_sms_from_ip_sent_in_last_hours(hours, ip, max_sms_count=20):
+        since = datetime.datetime.now() - datetime.timedelta(hours=hours)
+        return SentSms.objects.filter(ip_address=ip, sent_date__gt=since).count() >= max_sms_count
 
     class Meta:
         verbose_name = _('Sent SMS')
