@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 ERROR_CODES = {
     '0': _(u'OK'),
@@ -19,7 +19,7 @@ ERROR_CODES = {
 
 API_ACCES_POINT = 'http://api.smsbrana.cz/smsconnect/http.php'
 
-DATETIME_FORMAT='%Y%m%dT%H%M%S'
+DATETIME_FORMAT = '%Y%m%dT%H%M%S'
 
 DELIVERY_STATUS_UNKNOWN = '0'
 DELIVERY_STATUS_DELIVERED = '1'
