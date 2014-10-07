@@ -11,7 +11,7 @@ class SentSms(models.Model):
     message = models.CharField(_(u'message'), max_length=500)
     verification_code = models.CharField(_(u'verification code'), max_length=10, blank=True, null=True)
     sent_date = CreationDateTimeField(_(u'created'), db_index=True)
-    delivered = models.BooleanField(_(u'delivered'), db_index=True)
+    delivered = models.BooleanField(_(u'delivered'), default=False, db_index=True)
     delivered_date = models.DateTimeField(_(u'delivered time'), blank=True, null=True, editable=False)
     ip_address = models.IPAddressField(blank=True, null=True, db_index=True)
 
@@ -39,12 +39,12 @@ class SentSms(models.Model):
     def sms_to_number_delivered_in_last_hours(hours, phone_number):
         day_ago = datetime.datetime.now() - datetime.timedelta(hours=hours)
         return SentSms.objects.filter(phone_number=phone_number, sent_date__gt=day_ago, delivered=True).exists()
-    
+
     @staticmethod
     def too_many_sms_to_number_sent_in_last_hours(hours, phone_number, max_sms_count=5):
         since = datetime.datetime.now() - datetime.timedelta(hours=hours)
         return SentSms.objects.filter(phone_number=phone_number, sent_date__gt=since).count() >= max_sms_count
-    
+
     @staticmethod
     def too_many_sms_from_ip_sent_in_last_hours(hours, ip, max_sms_count=20):
         since = datetime.datetime.now() - datetime.timedelta(hours=hours)
