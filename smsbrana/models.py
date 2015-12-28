@@ -13,7 +13,7 @@ class SentSms(models.Model):
     sent_date = CreationDateTimeField(_(u'created'), db_index=True)
     delivered = models.BooleanField(_(u'delivered'), default=False, db_index=True)
     delivered_date = models.DateTimeField(_(u'delivered time'), blank=True, null=True, editable=False)
-    ip_address = models.IPAddressField(blank=True, null=True, db_index=True)
+    ip_address = models.GenericIPAddressField(blank=True, null=True, db_index=True)
 
     def __unicode__(self):
         return self.phone_number
