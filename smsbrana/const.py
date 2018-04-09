@@ -17,7 +17,7 @@ ERROR_CODES = {
     '12': _(u'SMS je delší než povolených 459 znaků'),
     }
 
-API_ACCES_POINT = 'http://api.smsbrana.cz/smsconnect/http.php'
+API_ACCES_POINT = 'https://api.smsbrana.cz/smsconnect/http.php'
 
 DATETIME_FORMAT = '%Y%m%dT%H%M%S'
 
@@ -26,4 +26,3 @@ DELIVERY_STATUS_DELIVERED = '1'
 DELIVERY_STATUS_STORED = '2'
 DELIVERY_STATUS_UNDELIVERED = '3'
 DELIVERY_STATUS_EXPIRED = '5'
-
