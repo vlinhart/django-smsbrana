@@ -15,7 +15,7 @@ ERROR_CODES = {
     '10': _(u'neplatné císlo príjemce SMS'),
     '11': _(u'prázdný text zprávy'),
     '12': _(u'SMS je delší než povolených 459 znaků'),
-    }
+}
 
 API_ACCES_POINT = 'https://api.smsbrana.cz/smsconnect/http.php'
 
