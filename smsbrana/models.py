@@ -3,8 +3,11 @@ import datetime
 import random
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.fields import CreationDateTimeField
 
+
+@python_2_unicode_compatible
 class SentSms(models.Model):
     sms_id = models.IntegerField(primary_key=True)
     phone_number = models.CharField(_(u'phone number'), max_length=20, db_index=True)
@@ -13,16 +16,16 @@ class SentSms(models.Model):
     sent_date = CreationDateTimeField(_(u'created'), db_index=True)
     delivered = models.BooleanField(_(u'delivered'), default=False, db_index=True)
     delivered_date = models.DateTimeField(_(u'delivered time'), blank=True, null=True, editable=False)
-    ip_address = models.IPAddressField(blank=True, null=True, db_index=True)
+    ip_address = models.GenericIPAddressField(blank=True, null=True, db_index=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.phone_number
 
     @staticmethod
     def generate_sms_verification_code(length=6):
-        choices = range(0, 10)
+        choices = list(range(0, 10))
         result = []
-        for i in xrange(0, length):
+        for i in range(0, length):
             result.append(str(random.choice(choices)))
         return ''.join(result)
 
