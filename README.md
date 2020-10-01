@@ -10,12 +10,12 @@ You can call three commands :
 
 It also provides notification callback view function. Which will be called upon arrival of new message into your inbox.
 
-##Installation
+## Installation
     pip install git+git://github.com/vlinhart/django-smsbrana.git#egg=smsbrana
     add 'smsbrana' to the INSTALLED_APPS.
     add url(r'^smsbrana/', include('smsbrana.urls', namespace="smsbrana")) to urls.py
 
-##Configuration
+## Configuration
 It's necessary to set several constants in settings.py:
 
     SMS_CONNECT_LOGIN = username
@@ -25,7 +25,7 @@ It's necessary to set several constants in settings.py:
     SMS_CONNECT_SECURE = True #if you want to use plaintext password sending, don't
     SMS_CONNECT_SENDER_ID = 'some sender id' #from smsbrana configuration
 
-##Usage
+## Usage
 Have a look at the tests to see how the class SmsConnect is used. Basically like this:
 
     sc = SmsConnect()
@@ -35,16 +35,16 @@ Have a look at the tests to see how the class SmsConnect is used. Basically like
 All API calls can raise SmsConnectException, you should handle it. 
 
 
-###Signals
+### Signals
 There are two signals provided. 
 
 * smsconnect_notification_received -- caled when view notification function is called, providing request and result of inbox API call
 * smsconnect_sms_sent -- called when SMS is sent, provides phone_number, text and result of the API call
 
-###View function
+### View function
 smsconnect_notification will handle notification calls from smsbrana.cz which will be issued upon new message arrival or sms delivery. It will fire the *smsconnect_notification_received* signal. This function is updating state of SentSms model instances, setting their flags, *delivered* and *delivered_date*.
 
-###Model SentSms
+### Model SentSms
 You can use this model to track sent SMSes. Some helpful methods on the model are also provided. 
 
 * generate_sms_verification_code(length=6) -- if you want to use model for sending verification codes
